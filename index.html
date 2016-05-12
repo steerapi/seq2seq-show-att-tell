@@ -43,8 +43,11 @@ We compare our proposed method with a number of different methods, including the
 
 <p>This repository contains the necessary code to train and run the Sequenced Show, Attend, and Tell model.  The Flickr-8K dataset can be used for training.  We suggest using a GPU for training.</p>
 
-<!--<h3>-->
-<!--<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating pages manually</h3>-->
+<h3>
+<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example Results</h3>
+<img src="exampleimages.png" alt="images of dogs with captions"/>
+
+The figure above shows example words from captions generated with our proposed Sequenced Show, Attend, and Tell method, where each word of the caption is presented above a visualization of the areas in which the attention model focuses in generating the word at its given timestep. Note that in both examples, the attention focuses on the grassy field when generating the word “grass” in the caption “A brown dog is running through the grass” and the snowy background when generating the word ”snow” in the caption “Two brown dogs play in the snow.”
 
 <!--<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>-->
 
