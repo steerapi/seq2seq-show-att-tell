@@ -6,7 +6,7 @@ We compare our proposed method with a number of different methods, including the
 If you use this model or codebase, please cite:
 
     @misc{seqshowatttell,
-      author = {Teerapittayanon, Surat and Comiter, Marcus},
+      author = {Comiter, Marcus and Teerapittayanon, Surat},
       title = {Sequenced Show, Attend, and Tell: Natural Language from Natural Images},
       year = {2016},
       publisher = {GitHub},
