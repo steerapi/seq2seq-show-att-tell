@@ -3,6 +3,11 @@ We present Sequenced Show, Attend, and Tell: Natural Language from Natural Image
 
 We compare our proposed method with a number of different methods, including the attention- based method of Xu et al. (2015) as well as the attention-less method of Vinyals et al. (2015). Addi- tionally, we present results both with and without the use of pretrained word embeddings, with the use of different CNNs for feature extraction, the use of reverse ordering of the source input into the LSTM, and the use of residual connections. We find that our proposed method is com- parable with the state of the art. Further, we find that the use of pretrained word embeddings, different CNNs, reversing the ordering of the input, and the use of residual connections do not have a large impact on system performance.
 
+A full example gallery can be seen at: <a href="http://steerapi.github.io/seq2seq-show-att-tell/flickr8k/pages/index.html">http://steerapi.github.io/seq2seq-show-att-tell/flickr8k/pages/index.html</a>
+
+Preprocessed features for the Flickr-8K, Flickr-30K, and Microsoft COCO datasets can be found at <a href="https://drive.google.com/folderview?id=0Byyuc5LmNmJPQmJzVE5GOEJOdzQ&usp=sharing">https://drive.google.com/folderview?id=0Byyuc5LmNmJPQmJzVE5GOEJOdzQ&usp=sharing</a>
+
+
 If you use this model or codebase, please cite:
 
     @misc{seqshowatttell,
