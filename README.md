@@ -5,11 +5,11 @@ We compare our proposed method with a number of different methods, including the
 
 If you use this model or codebase, please cite
 
-@misc{githubresnet,
-  author = {Teerapittayanon, Surat and Comiter, Marcus},
-  title = {Sequenced Show, Attend, and Tell: Natural Language from Natural Images},
-  year = {2016},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {https://github.com/steerapi/seq2seq-show-att-tell/}
+@misc{seqshowatttell,<br />
+  author = {Teerapittayanon, Surat and Comiter, Marcus},<br />
+  title = {Sequenced Show, Attend, and Tell: Natural Language from Natural Images},<br />
+  year = {2016},<br />
+  publisher = {GitHub},<br />
+  journal = {GitHub repository},<br />
+  howpublished = {https://github.com/steerapi/seq2seq-show-att-tell/}<br />
 }
