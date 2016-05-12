@@ -15,7 +15,7 @@ function data:__init(opt, data_file)
     self.target_output_table = {}
     self.total_words_table = {}
     
-    local num_sentences = 5
+    local num_sentences = opt.num_sentences
     for i=0,num_sentences-1 do
         self.target_input_table[i+1] = f:read('target_input_'..i):all()
         self.target_output_table[i+1] = f:read('target_output_'..i):all()
@@ -26,16 +26,30 @@ function data:__init(opt, data_file)
     self.target_l = f:read('target_l'):all()
     self.source_l = f:read('source_l'):all()
 
-    local num_batches = f:read('num_batches'):all()[1]
+    -- local num_batches = f:read('num_batches'):all()[1]
+    local num_batches = self.source_input:size(1)
     self.length = num_batches*num_sentences
     self.max_target_sent_l = f:read('max_target_sent_l'):all()[1]   
     self.max_source_sent_l = f:read('max_source_sent_l'):all()[1]   
-    
+    -- print("num_batches",num_batches,f:read('num_batches'):all()[1])
+
     f:close()
     self.batches = {}
 
+    local source_l_rev = torch.ones(self.max_source_sent_l):long()
+    for i = 1, self.max_source_sent_l do
+        source_l_rev[i] = self.max_source_sent_l - i + 1
+    end
+    
+    
     for i = 1, num_batches do
+        --print("self.source_input",self.source_input:size())
         local source_input_i = self.source_input[i]:transpose(1,2)
+        
+        if opt.reverse_src == 1 then
+            source_input_i = source_input_i:index(1, source_l_rev[{{1, self.max_source_sent_l}}])
+        end
+        
         for j = 1, num_sentences do
             local target_input = self.target_input_table[j]
             local target_output = self.target_output_table[j]

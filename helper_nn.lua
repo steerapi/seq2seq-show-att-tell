@@ -18,6 +18,18 @@ local model_test = function(model_bundle, opt)
     
     local f = hdf5.open(opt.testfile, 'r')
     local source = f:read('source_input'):all()
+    
+    if opt.reverse_src == 1 then
+        local source_l_rev = torch.ones(opt.max_sent_l):long()
+        for i = 1, opt.max_sent_l do
+            source_l_rev[i] = opt.max_sent_l - i + 1
+        end
+        for i = 1, num_batches do
+            local source_input_i = source[i]:transpose(1,2)
+            source_input_i = source_input_i:index(1, source_l_rev[{{1, opt.max_sent_l}}])
+        end
+    end
+        
     if opt.gpuid > 0 then
         source = source:cuda()
     end

@@ -58,23 +58,27 @@ function train(train_data, valid_data, layers, criterion)
         grad_params[i] = gp
     end
     
-    if opt.pre_word_vecs_dec:len() > 0 then      
+    if opt.pre_word_vecs_dec:len() > 0 then
         local f = hdf5.open(opt.pre_word_vecs_dec)     
-        local pre_word_vecs = f:read('word_vecs'):all()
+        local pre_word_vecs = f:read('weights'):all()
+        print("loading pre word vecs...")
+        print("pre_word_vecs:size()",pre_word_vecs:size())
+        print("word_vecs_dec.weight", word_vecs_dec.weight:size())
         for i = 1, pre_word_vecs:size(1) do
-            word_vecs_dec.weight[1]:copy(pre_word_vecs[i])
+            word_vecs_dec.weight[i]:copy(pre_word_vecs[i])
         end      
+        print("done.")
     end
 
     print("Number of parameters: " .. num_params)
 
     if opt.gpuid >= 0 and opt.gpuid2 >= 0 then
         cutorch.setDevice(opt.gpuid)
-        word_vecs_enc.weight[1]:zero()      
+        --word_vecs_enc.weight[1]:zero()      
         cutorch.setDevice(opt.gpuid2)
         word_vecs_dec.weight[1]:zero()
     else
-        word_vecs_enc.weight[1]:zero()            
+        --word_vecs_enc.weight[1]:zero()            
         word_vecs_dec.weight[1]:zero()
     end         
 
@@ -308,10 +312,10 @@ function train(train_data, valid_data, layers, criterion)
                 end	    
             end
 
-            word_vecs_enc.gradWeight[1]:zero()
-            if opt.fix_word_vecs_enc == 1 then
-                word_vecs_enc.gradWeight:zero()
-            end
+            --word_vecs_enc.gradWeight[1]:zero()
+            --if opt.fix_word_vecs_enc == 1 then
+            --    word_vecs_enc.gradWeight:zero()
+            --end
 
             grad_norm = (grad_norm + grad_params[1]:norm()^2)^0.5
 
@@ -405,7 +409,7 @@ function train(train_data, valid_data, layers, criterion)
         -- clean and save models
         if epoch % opt.save_every == 0 then
             print('saving checkpoint to ' .. savefile)
-            --clean_layer(encoder); clean_layer(decoder); clean_layer(generator)
+            --clean_layer(generator)
             torch.save(savefile, {{encoder, decoder, generator, criterion}, opt})
             
             lossdata = {
@@ -435,7 +439,7 @@ function train(train_data, valid_data, layers, criterion)
 
     -- save final model
     local savefile = string.format('%s', opt.savefile)
-    --clean_layer(encoder); clean_layer(decoder); clean_layer(generator)
+    --clean_layer(generator)
     torch.save(savefile, {{encoder, decoder, generator, criterion}, opt})
     print('done')
 end

@@ -62,12 +62,14 @@ cmd:option('-train', 1, 'run training code')
 cmd:option('-test', 1, 'run test')
 
 cmd:option('-word_vec_size', 50, 'words embedded dimension')
+
 cmd:option('-hop_attn', 0, [[If > 0, then use a *hop attention* on this layer of the decoder. For example, if num_layers = 3 and `hop_attn = 2`, then the model will do an attention over the source sequence on the second layer (and use that as input to the third layer) and the penultimate layer]])
+
 cmd:option('-res_net', 0, [[Use residual connections between LSTM stacks whereby the input to the l-th LSTM layer if the hidden state of the l-1-th LSTM layer  added with the l-2th LSTM layer. We didn't find this to help in our  experiments]])
 cmd:option('-curriculum', 0, [[For this many epochs, order the minibatches based on source sequence length. Sometimes setting this to 1 will increase convergence speed.]])
 
 cmd:option('-source_size', 512, [[Source vocab size]])
-cmd:option('-target_size', 8387, [[Target vocab size]])
+cmd:option('-target_size', 8388, [[Target vocab size]])
 cmd:option('-rnn_size', 500, [[Size of LSTM hidden states]])
 cmd:option('-num_layers', 2, [[Number of layers in the LSTM encoder/decoder]])
 
@@ -83,7 +85,7 @@ cmd:option('-gpuid2', -1, [[If this is >= 0, then the model will use two GPUs wh
 cmd:option('-cudnn', 1, [[Whether to use cudnn or not for convolutions (for the character model). cudnn has much faster convolutions so this is highly recommended if using the character model]])
 
 -- optimization
-cmd:option('-epochs', 13, [[Number of training epochs]])
+cmd:option('-epochs', 20, [[Number of training epochs]])
 
 cmd:option('-param_init', 0.1, [[Parameters are initialized over uniform distribution with support (-param_init, param_init)]])
 cmd:option('-learning_rate', 1, [[Starting learning rate]])
@@ -105,6 +107,18 @@ cmd:option('-beam', 5, [[Beam size]])
 cmd:option('-targ_dict', 'mydata/idx_to_word.txt', [[Path to target vocabulary, "id word" per line]])
 cmd:option('-max_sent_l', 196, [[Maximum sentence length. If any sequences in srcfile are longer than this then it will error out]])
 cmd:option('-simple', 0, [[If = 1, output prediction is simply the first time the top of the beam ends with an end-of-sentence token. If = 0, the model considers all hypotheses that have been generated so far that ends with end-of-sentence token and takes the highest scoring of all of them.]])
+
+cmd:option('-init_dec', 1, [[Initialize the hidden/cell state of the decoder at time 
+                           0 to be the last hidden/cell state of the encoder. If 0, 
+                           the initial states of the decoder are set to zero vectors]])
+
+cmd:option('-reverse_src', 0, [[If = 1, reverse the source sequence. The original 
+                              sequence-to-sequence paper found that this was crucial to 
+                              achieving good performance, but with attention models this
+                              does not seem necessary. Recommend leaving it to 0]])
+
+cmd:option('-num_sentences', 5, [[Number of sentences per data]])
+
 
 function main()
     -- Parse input params

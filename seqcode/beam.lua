@@ -91,15 +91,19 @@ local function generate_beam(model, initial, K, max_sent_l, source, init_fwd_enc
    local attn_argmax = {}   -- store attn weights
    attn_argmax[1] = {}
 
+   local attn_max = {}   -- store attn weights
+   attn_max[1] = {}
+    
    local states = {} -- store predicted word idx
    states[1] = {}
    for k = 1, 1 do
       table.insert(states[1], initial)
       table.insert(attn_argmax[1], initial)
+      table.insert(attn_max[1], {torch.zeros(opt.max_sent_l)})
       next_ys[1][k] = StateAll.next(initial)
    end
 
-   local source_input = source:view(source_l, 512)
+   local source_input = source:view(source_l, opt.source_size)
 
    local rnn_state_enc = {}
    for i = 1, #init_fwd_enc do
@@ -137,11 +141,14 @@ local function generate_beam(model, initial, K, max_sent_l, source, init_fwd_enc
       i = i+1
       states[i] = {}
       attn_argmax[i] = {}
+      attn_max[i] = {}
+        
       local decoder_input1
       decoder_input1 = next_ys:narrow(1,i-1,1):squeeze()
       if opt.beam == 1 then
         decoder_input1 = torch.LongTensor({decoder_input1})
       end	
+        
       local decoder_input = {decoder_input1, context, table.unpack(rnn_state_dec)}
       local out_decoder = model[2]:forward(decoder_input)
       local out = model[3]:forward(out_decoder[#out_decoder]) -- K x vocab_size
@@ -165,10 +172,13 @@ local function generate_beam(model, initial, K, max_sent_l, source, init_fwd_enc
 
        
        for k = 1, K do
+            
           while true do
              local score, index = flat_out:max(1)
              local score = score[1]
              local prev_k, y_i = flat_to_rc(out_float, index[1])
+                
+
              states[i][k] = StateAll.advance(states[i-1][prev_k], y_i)
              local diff = true
              for k2 = 1, k-1 do
@@ -180,6 +190,8 @@ local function generate_beam(model, initial, K, max_sent_l, source, init_fwd_enc
              if i < 2 or diff then		
                 local max_attn, max_index = decoder_softmax.output[prev_k]:max(1)
                 attn_argmax[i][k] = StateAll.advance(attn_argmax[i-1][prev_k],max_index[1])
+                attn_max[i][k] = StateAll.advance(attn_max[i-1][prev_k],decoder_softmax.output[prev_k])
+                    
                 prev_ks[i][k] = prev_k
                 next_ys[i][k] = y_i
                 scores[i][k] = score
@@ -205,6 +217,7 @@ local function generate_beam(model, initial, K, max_sent_l, source, init_fwd_enc
                 found_eos = true
                 if scores[i][k] > max_score then
                    max_hyp = possible_hyp
+                   max_k = k
                    max_score = scores[i][k]
                    max_attn_argmax = attn_argmax[i][k]
                 end
@@ -215,11 +228,20 @@ local function generate_beam(model, initial, K, max_sent_l, source, init_fwd_enc
    
    if opt.simple == 1 or end_score > max_score or not found_eos then
       max_hyp = end_hyp
+      max_k = 1
       max_score = end_score
       max_attn_argmax = end_attn_argmax
    end
-
-   return max_hyp, max_score, max_attn_argmax, states[i], scores[i], attn_argmax[i]
+   --local attns = torch.zeros(#max_hyp-2, opt.max_sent_l)
+   --local m = 1
+   --for j = 2,#max_hyp-1 do
+   --     attns[m] = attn_max[j][max_k]:double()
+   --     m = m + 1
+   --end
+   --print('states',states)
+   --print('scores',scores)
+   --print('attn_argmax',attn_argmax[i])
+   return max_hyp, max_score, max_attn_argmax, states[i], scores[i], attn_argmax[i], attn_max[i][max_k]
 end
 
 local function idx2key(file)   
@@ -254,15 +276,15 @@ function run_beam(model, source, opt)
     local function get_layer(layer)
        if layer.name ~= nil then
           if layer.name == 'decoder_attn' then
-         decoder_attn = layer
+             decoder_attn = layer
           elseif layer.name:sub(1,3) == 'hop' then
-         hop_attn = layer
+             hop_attn = layer
           elseif layer.name:sub(1,7) == 'softmax' then
-         table.insert(softmax_layers, layer)
+             table.insert(softmax_layers, layer)
           elseif layer.name == 'word_vecs_enc' then
-         word_vecs_enc = layer
+             word_vecs_enc = layer
           elseif layer.name == 'word_vecs_dec' then
-         word_vecs_dec = layer
+             word_vecs_dec = layer
           end       
        end
     end
@@ -306,7 +328,9 @@ function run_beam(model, source, opt)
     local sent_id = 0
 
     local out_file = io.open(opt.outfile,'w')
-
+    
+    local attns_vectors = torch.zeros(source:size(1)*source:size(2), opt.max_sent_l, opt.max_sent_l)
+    local j = 1
     for b = 1,source:size(1) do
         for i = 1,source:size(2) do
             local source_input = source[b][i]
@@ -315,16 +339,30 @@ function run_beam(model, source, opt)
             
             local state = StateAll.initial(START_WORD)
 
-            local pred, pred_score, attn, all_sents, all_scores, all_attn = generate_beam(model, state, opt.beam, opt.max_sent_l, source_input, init_fwd_enc, init_fwd_dec, context_proto, context_proto2, opt)
-
+            local pred, pred_score, attn, all_sents, all_scores, all_attn, attns = generate_beam(model, state, opt.beam, opt.max_sent_l, source_input, init_fwd_enc, init_fwd_dec, context_proto, context_proto2, opt)        
+            -- saving attention
+            -- print("#attns",#attns)
+            -- print(attns[1]:size())
+            -- print(attns_vectors:size())
+            for m = 1,(#attns-1) do
+                attns_vectors[{{j},{m},{}}] = attns[m+1]:double()
+            end
+            
             pred_score_total = pred_score_total + pred_score
             pred_words_total = pred_words_total + #pred - 1
 
             local pred_sent = wordidx2sent(pred, idx2word_targ)
             out_file:write(pred_sent .. '\n')
             print('PRED ' .. sent_id .. ': ' .. pred_sent)
+            j = j + 1
         end
     end
+    
+    print("WRITE ATTENTION WEIGHTS")
+    local attn_file = hdf5.open(opt.outfile..'_attns_vectors.hdf5', 'w')
+    attn_file:write('attns_vectors', attns_vectors)
+    attn_file:close()
+    print("DONE")
 
     print(string.format("PRED AVG SCORE: %.4f, PRED PPL: %.4f", pred_score_total / pred_words_total, math.exp(-pred_score_total/pred_words_total)))
 
