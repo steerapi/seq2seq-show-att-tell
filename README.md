@@ -3,7 +3,7 @@ We present Sequenced Show, Attend, and Tell: Natural Language from Natural Image
 
 We compare our proposed method with a number of different methods, including the attention- based method of Xu et al. (2015) as well as the attention-less method of Vinyals et al. (2015). Addi- tionally, we present results both with and without the use of pretrained word embeddings, with the use of different CNNs for feature extraction, the use of reverse ordering of the source input into the LSTM, and the use of residual connections. We find that our proposed method is com- parable with the state of the art. Further, we find that the use of pretrained word embeddings, different CNNs, reversing the ordering of the input, and the use of residual connections do not have a large impact on system performance.
 
-If you use this model or codebase, please cite
+If you use this model or codebase, please cite:
 
     @misc{seqshowatttell,<br />
       author = {Teerapittayanon, Surat and Comiter, Marcus},<br />
