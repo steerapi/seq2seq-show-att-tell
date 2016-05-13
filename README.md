@@ -76,7 +76,7 @@ bash scripts/test_seq2seq_att.sh
 Once the model has been used to generate captions, the resulting captions can be scored by executing the following in the code/directory:
 
 ```
-bash scripts/score.sh
+bash scripts/score.sh <resulting file from running scripts/test_seq2seq_att.sh>
 ```
 
 This will score the results in terms of BLEU score (specifically, BLEU-1, BLEU-2, BLEU-3, and BLEU-4).
