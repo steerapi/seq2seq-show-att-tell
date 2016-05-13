@@ -101,6 +101,7 @@ The resulting generated captions can be visualized next to the input image, wher
 
 ```
 python generate_html.py -attenvecs <file containing the attention vectors> -imagedir <directory containing the corresponding images>
+```
 
 #### Acknowledgments
 Our Sequenced Show, Attend, and Tell implementation utilizes code from the following:
