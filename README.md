@@ -21,22 +21,18 @@ If you use this model or codebase, please cite:
     
 ### Dependencies
 
-#### Python
-* h5py
+#### Python Dependencies
+* h5py (for saving data)
 * numpy
 
-#### Lua 
+#### Lua Dependencies
 You will need the following packages:
-* hdf5
+* hdf5 (for saving/reading data)
 * nngraph
 
 GPU usage will additionally require:
 * cutorch
 * cunn
-
-If running the character model, you should also install:
-* cudnn
-* luautf8
 
 
 #### Acknowledgments
