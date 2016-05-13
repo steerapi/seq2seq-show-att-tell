@@ -38,12 +38,22 @@ If you use a GPU for running the model, you will also need:
 ### Instructions for Using the Codebase
 
 #### Preprocessing and Data Acquisition
-First download the features extracted from the convolutional neural network for each of the datasets.  Once these features have been downloaded, run the preprocess script by executing
+First download the features extracted from the convolutional neural network for each of the datasets.  Once these features have been downloaded, run the preprocess script by executing the following in the code/ directory:
 
 ```
-bash preprocess.sh
+bash scripts/preprocess.sh
+```
+This will generate hdf5 data files for each of the datasets for use with the algorithm.  If you only wish to generate data files for a subset of the available datasets, comment out the appropriate lines of scripts/preprocess.sh
+
+Following the generation of the hdf5 files, you can run the model by executing the following in the code/ director:
+
+```
+bash scripts/run_seq2seq_att.sh
+bash scripts/test_seq2seq_att.sh
+bash scripts/score.sh
 ```
 
+The first script trains the model, the second produces output on the test portion of the dataset, and the final script scores the results in terms of BLEU score (specifically, BLEU-1, BLEU-2, BLEU-3, and BLEU-4).
 
 #### Acknowledgments
 Our Sequenced Show, Attend, and Tell implementation utilizes code from the following:
