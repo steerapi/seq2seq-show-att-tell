@@ -9,13 +9,13 @@ Preprocessed features for the Flickr-8K, Flickr-30K, and Microsoft COCO datasets
 
 To read out the reference sentences in JSON format for each dataset, in Python execute:
 ```
-f = h5py.File(testdatafile, "r")
+f = h5py.File(<file>, "r")
 sentences = f.attrs['sents']
 ```
 
 To access the convolutional features for each dataset, in Python execute:
 ```
-f = h5py.File(testdatafile, "r")
+f = h5py.File(<file>, "r")
 convolution_features = np.array(f['feats_conv'])
 ```
 
@@ -62,7 +62,6 @@ Following the generation of the hdf5 files, you can train the model by executing
 
 ```
 bash scripts/run_seq2seq_att.sh
-
 ```
 
 #### Using the Model
