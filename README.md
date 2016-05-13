@@ -18,3 +18,30 @@ If you use this model or codebase, please cite:
       journal = {GitHub repository},
       howpublished = {https://github.com/steerapi/seq2seq-show-att-tell/}
     }
+    
+### Dependencies
+
+#### Python
+* h5py
+* numpy
+
+#### Lua 
+You will need the following packages:
+* hdf5
+* nngraph
+
+GPU usage will additionally require:
+* cutorch
+* cunn
+
+If running the character model, you should also install:
+* cudnn
+* luautf8
+
+
+#### Acknowledgments
+Our implementation utilizes code from the following:
+* [Yoon Kim's s Sequence-to-Sequence Learning with Attentional Neural Networks](https://github.com/harvardnlp/seq2seq-attn)
+* [Andrej Karpathy's char-rnn repo](https://github.com/karpathy/char-rnn)
+* [Wojciech Zaremba's lstm repo](https://github.com/wojzaremba/lstm)
+* [Element rnn library](https://github.com/Element-Research/rnn)
