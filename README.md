@@ -30,13 +30,23 @@ You will need the following packages:
 * hdf5 (for saving/reading data)
 * nngraph
 
-GPU usage will additionally require:
+If you use a GPU for running the model, you will also need:
 * cutorch
 * cunn
 
 
+### Instructions for Using the Codebase
+
+#### Preprocessing and Data Acquisition
+First download the features extracted from the convolutional neural network for each of the datasets.  Once these features have been downloaded, run the preprocess script by executing
+
+```
+bash preprocess.sh
+```
+
+
 #### Acknowledgments
-Our implementation utilizes code from the following:
+Our Sequenced Show, Attend, and Tell implementation utilizes code from the following:
 * [Yoon Kim's s Sequence-to-Sequence Learning with Attentional Neural Networks](https://github.com/harvardnlp/seq2seq-attn)
 * [Andrej Karpathy's char-rnn repo](https://github.com/karpathy/char-rnn)
 * [Wojciech Zaremba's lstm repo](https://github.com/wojzaremba/lstm)
