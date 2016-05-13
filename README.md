@@ -64,12 +64,22 @@ Following the generation of the hdf5 files, you can train the model by executing
 bash scripts/run_seq2seq_att.sh
 ```
 
+By default, you must have both a training hdf5 file located at 'mydata/flickr8k_train.hdf5' and a validation hdf5 file located at 'mydata/flickr8k_train.hdf5'.  If you wish to use other training and validation files, you can pass this in as an option by altering the scripts/run_seq2seq_att.sh script, or by running the Lua file project.lua directly and passing in the following options:
+```
+-trainfile <training file from output of preprocessing> -validfile <validation file from output of preproessing>
+```
+
 #### Using the Model
 
 Once the model has been trained, it can be used to generate captions for the test portion of the dataset by executing the following in the code/ directory:
 
 ```
 bash scripts/test_seq2seq_att.sh
+```
+
+By default, you must have an ``index to word'' file located at 'mydata/idx_to_word.txt'.  If you wish to use another index to word file, you can pass this in as an option by altering the scripts/test_seq2seq_att.sh script, or by running the Lua file project.lua directly and passing in the following option:
+```
+-targ_dict' <index to word file>
 ```
 
 #### Scoring the Output of the Model
