@@ -5,8 +5,19 @@ We compare our proposed method with a number of different methods, including the
 
 A full example gallery can be seen at: <a href="http://steerapi.github.io/seq2seq-show-att-tell/flickr8k/pages/index.html">http://steerapi.github.io/seq2seq-show-att-tell/flickr8k/pages/index.html</a>
 
-Preprocessed features for the Flickr-8K, Flickr-30K, and Microsoft COCO datasets can be found at <a href="https://drive.google.com/folderview?id=0Byyuc5LmNmJPQmJzVE5GOEJOdzQ&usp=sharing">https://drive.google.com/folderview?id=0Byyuc5LmNmJPQmJzVE5GOEJOdzQ&usp=sharing</a>
+Preprocessed features for the Flickr-8K, Flickr-30K, and Microsoft COCO datasets can be found at <a href="https://drive.google.com/folderview?id=0Byyuc5LmNmJPQmJzVE5GOEJOdzQ&usp=sharing">https://drive.google.com/folderview?id=0Byyuc5LmNmJPQmJzVE5GOEJOdzQ&usp=sharing</a>.  This directory contains features extracted for these datasets using the VGG-16 Convolutional Neural Network (CNN).   The features are extracted from the last convolutional layer before the fully connected layers, where each image generate 196 features (14x14 unrolled) of length 512.  The provided preprocessing script (see below) automatically extracts the convolutional features and other relevant data from these files.  However, if you want to access portions of the data manually, you can do so through the following:
 
+To read out the reference sentences in JSON format for each dataset, in Python execute:
+```
+f = h5py.File(testdatafile, "r")
+sentences = f.attrs['sents']
+```
+
+To access the convolutional features for each dataset, in Python execute:
+```
+f = h5py.File(testdatafile, "r")
+convolution_features = np.array(f['feats_conv'])
+```
 
 If you use this model or codebase, please cite:
 
@@ -45,15 +56,31 @@ bash scripts/preprocess.sh
 ```
 This will generate hdf5 data files for each of the datasets for use with the algorithm.  If you only wish to generate data files for a subset of the available datasets, comment out the appropriate lines of scripts/preprocess.sh
 
-Following the generation of the hdf5 files, you can run the model by executing the following in the code/ director:
+#### Training the Model
+
+Following the generation of the hdf5 files, you can train the model by executing the following in the code/ directory:
 
 ```
 bash scripts/run_seq2seq_att.sh
+
+```
+
+#### Using the Model
+
+Once the model has been trained, it can be used to generate captions for the test portion of the dataset by executing the following in the code/ directory:
+
+```
 bash scripts/test_seq2seq_att.sh
+```
+
+#### Scoring the Output of the Model
+Once the model has been used to generate captions, the resulting captions can be scored by executing the following in the code/directory:
+
+```
 bash scripts/score.sh
 ```
 
-The first script trains the model, the second produces output on the test portion of the dataset, and the final script scores the results in terms of BLEU score (specifically, BLEU-1, BLEU-2, BLEU-3, and BLEU-4).
+This will score the results in terms of BLEU score (specifically, BLEU-1, BLEU-2, BLEU-3, and BLEU-4).
 
 #### Acknowledgments
 Our Sequenced Show, Attend, and Tell implementation utilizes code from the following:
