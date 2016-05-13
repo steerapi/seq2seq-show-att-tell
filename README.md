@@ -56,6 +56,11 @@ bash scripts/preprocess.sh
 ```
 This will generate hdf5 data files for each of the datasets for use with the algorithm.  If you only wish to generate data files for a subset of the available datasets, comment out the appropriate lines of scripts/preprocess.sh
 
+To use pretrained weights in the model, execute the following:
+```
+python generate_pretrained_embedding.py -traindatafile <training data file> -validdatafile <validation data file> -testdatafile <testing data file> -pretrainedembeddingsfile <file with pretrained weights> -savefile <file to which the weights will be saved in a format usable by the model>
+```
+
 #### Training the Model
 
 Following the generation of the hdf5 files, you can train the model by executing the following in the code/ directory:
@@ -90,6 +95,13 @@ bash scripts/score.sh <resulting file from running scripts/test_seq2seq_att.sh>
 ```
 
 This will score the results in terms of BLEU score (specifically, BLEU-1, BLEU-2, BLEU-3, and BLEU-4).
+
+#### Visualizing Results
+The resulting generated captions can be visualized next to the input image, where the input image shows which area of the image attention was focused on in generating each word of the caption.  To automatically create a set of web pages, including a directory ``index.html'' page and individual pages for each image/caption, execute the following:
+
+```
+python generate_html.py -attenvecs <file containing the attention vectors> -imagedir <directory containing the corresponding images>
+```
 
 #### Acknowledgments
 Our Sequenced Show, Attend, and Tell implementation utilizes code from the following:
